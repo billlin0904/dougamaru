@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PureText YouTube 字幕</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="brand-mark" aria-hidden="true">
+          <img src="icons/icon-48.png" alt="" />
+        </div>
+        <div class="brand-copy">
+          <h1>PureText 字幕</h1>
+          <p>Audio-IO × YouTube</p>
+        </div>
+        <button id="login-button" class="login-button" type="button">
+          登入
+        </button>
+        <button
+          id="close-panel"
+          class="close-button"
+          type="button"
+          aria-label="關閉字幕面板"
+          title="關閉"
+        >
+          ×
+        </button>
+      </header>
+
+      <section id="login-panel" class="card auth-card" hidden>
+        <div>
+          <h2>登入 PureText</h2>
+          <p>登入後即可查看帳戶剩餘的轉譯分鐘數。</p>
+        </div>
+        <button id="google-login" class="google-login" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="#4285f4"
+              d="M21.6 12.2c0-.7-.1-1.4-.2-2.1H12v4h5.4a4.6 4.6 0 0 1-2 3v2.6h3.3c1.9-1.8 2.9-4.4 2.9-7.5Z"
+            />
+            <path
+              fill="#34a853"
+              d="M12 22c2.7 0 5-.9 6.7-2.3l-3.3-2.6c-.9.6-2.1 1-3.4 1a5.9 5.9 0 0 1-5.6-4.1H3v2.7A10 10 0 0 0 12 22Z"
+            />
+            <path
+              fill="#fbbc05"
+              d="M6.4 14a6 6 0 0 1 0-3.9V7.4H3a10 10 0 0 0 0 9.3L6.4 14Z"
+            />
+            <path
+              fill="#ea4335"
+              d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 3 7.4l3.4 2.7A5.9 5.9 0 0 1 12 5.9Z"
+            />
+          </svg>
+          使用 Google 登入
+        </button>
+        <div class="auth-divider"><span>或使用 Email</span></div>
+        <form id="login-form">
+          <label for="login-email">Email</label>
+          <input
+            id="login-email"
+            type="email"
+            autocomplete="username"
+            placeholder="user@example.com"
+            required
+          />
+          <label for="login-password">密碼</label>
+          <input
+            id="login-password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+          <button id="login-submit" class="primary" type="submit">登入</button>
+        </form>
+        <p id="login-error" class="status" data-kind="error" role="alert"></p>
+      </section>
+
+      <section id="account-card" class="account-card" hidden>
+        <div class="account-copy">
+          <strong id="account-name">PureText 使用者</strong>
+          <small id="account-email"></small>
+        </div>
+        <div class="credits">
+          <strong id="remaining-minutes">--</strong>
+          <small>剩餘分鐘</small>
+        </div>
+      </section>
+
+      <section class="card">
+        <label for="youtube-url">YouTube 影片網址</label>
+        <input
+          id="youtube-url"
+          type="url"
+          placeholder="https://www.youtube.com/watch?v=..."
+          autocomplete="off"
+        />
+        <div class="caption-actions">
+          <button id="generate" class="primary" type="button">
+            產生並掛載字幕
+          </button>
+          <button id="import-caption" type="button">
+            匯入 SRT
+          </button>
+          <button id="download-caption" type="button" disabled>
+            下載 SRT
+          </button>
+          <button
+            id="toggle-caption-visibility"
+            class="full-width"
+            type="button"
+            disabled
+          >
+            隱藏字幕
+          </button>
+          <input
+            id="import-caption-file"
+            type="file"
+            accept=".srt,application/x-subrip,text/plain"
+            hidden
+          />
+        </div>
+        <p id="status" class="status" role="status">
+          請先開啟一部 YouTube 影片。
+        </p>
+      </section>
+
+      <section id="progress-card" class="progress-card" hidden>
+        <div class="progress-heading">
+          <strong>轉譯進度</strong>
+          <span id="progress-percent">0%</span>
+        </div>
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-label="轉譯進度"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <span id="progress-bar"></span>
+        </div>
+        <dl class="progress-details">
+          <div>
+            <dt>預計完成</dt>
+            <dd id="progress-eta">正在估算完成時間…</dd>
+          </div>
+          <div>
+            <dt>預估剩餘</dt>
+            <dd id="progress-remaining">--</dd>
+          </div>
+          <div>
+            <dt>處理速度</dt>
+            <dd id="progress-speed">--</dd>
+          </div>
+          <div>
+            <dt>已執行</dt>
+            <dd id="progress-elapsed">--</dd>
+          </div>
+        </dl>
+        <small id="progress-updated" class="progress-updated"></small>
+      </section>
+
+      <label class="option-row" for="ignore-subtitles">
+        <span class="option-copy">
+          <strong>忽略 YouTube 內建字幕</strong>
+          <small>強制使用音軌重新轉錄，下次產生時生效</small>
+        </span>
+        <span class="switch">
+          <input id="ignore-subtitles" type="checkbox" />
+          <span class="switch-track" aria-hidden="true"></span>
+        </span>
+      </label>
+
+      <footer>
+        若影片沒有現成字幕，Audio-IO 可能需要下載音軌並進行轉錄。
+      </footer>
+    </main>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/oauth-callback.ts"],
+  "sourcesContent": ["interface GoogleCallbackMessage {\n  token: string;\n  type: \"PURETEXT_GOOGLE_CALLBACK\";\n}\n\nif (window.location.pathname === \"/auth/callback\") {\n  const params = new URLSearchParams(window.location.hash.replace(/^#/, \"\"));\n  const token = params.get(\"token\");\n\n  if (token) {\n    const message: GoogleCallbackMessage = {\n      token,\n      type: \"PURETEXT_GOOGLE_CALLBACK\",\n    };\n\n    void chrome.runtime.sendMessage(message).catch(() => undefined);\n  }\n}\n"],
+  "mappings": ";;;AAKA,MAAI,OAAO,SAAS,aAAa,kBAAkB;AACjD,UAAM,SAAS,IAAI,gBAAgB,OAAO,SAAS,KAAK,QAAQ,MAAM,EAAE,CAAC;AACzE,UAAM,QAAQ,OAAO,IAAI,OAAO;AAEhC,QAAI,OAAO;AACT,YAAM,UAAiC;AAAA,QACrC;AAAA,QACA,MAAM;AAAA,MACR;AAEA,WAAK,OAAO,QAAQ,YAAY,OAAO,EAAE,MAAM,MAAM,MAAS;AAAA,IAChE;AAAA,EACF;",
+  "names": []
+}
